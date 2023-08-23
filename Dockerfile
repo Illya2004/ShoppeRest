@@ -1,15 +1,14 @@
-#
-# Build stage
-#
-FROM gradle:jdk17-jammy AS build
-COPY --chown=gradle:gradle . /home/gradle/src
-WORKDIR /home/gradle/src
-RUN gradle build --no-daemon
+# Use an official OpenJDK runtime as a parent image
+FROM openjdk:11-jre-slim
 
-LABEL org.name="Shoppe"
-#
-# Package stage
-#
-FROM eclipse-temurin:17-jdk-jammy
-COPY --from=build /home/gradle/src/build/libs/docker-0.0.1-SNAPSHOT.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the executable JAR file from the target directory into the container at /app
+COPY target/SpringRc.jar .
+
+# Make port 8080 available to the world outside this container
+EXPOSE 8080
+
+# Run the JAR file when the container launches
+CMD ["java", "-jar", "SpringRc.jar"]
