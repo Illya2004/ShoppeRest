@@ -1,4 +1,4 @@
-package com.example.springpr.repository;
+package com.example.springpr.repository.product;
 
 import com.example.springpr.entity.Product;
 import com.example.springpr.entity.ProductAttributesValue;

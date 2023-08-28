@@ -1,29 +1,32 @@
 package com.example.springpr.service.product;
 
 import com.example.springpr.dto.product.*;
-import com.example.springpr.entity.Product;
-import com.example.springpr.entity.ProductAttributesValue;
-import com.example.springpr.entity.ProductCategories;
-import com.example.springpr.entity.ProductImages;
-import com.example.springpr.repository.ProductAttributesValueRepository;
-import com.example.springpr.repository.ProductCategoriesRepository;
-import com.example.springpr.repository.ProductImagesRepository;
-import com.example.springpr.repository.ProductRepository;
+import com.example.springpr.entity.*;
+import com.example.springpr.repository.elasticsearch.ProductElasticsearchRepository;
+import com.example.springpr.repository.product.ProductAttributesValueRepository;
+import com.example.springpr.repository.product.ProductCategoriesRepository;
+import com.example.springpr.repository.product.ProductImagesRepository;
+import com.example.springpr.repository.product.ProductRepository;
 import com.example.springpr.utils.ImageUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.springframework.data.elasticsearch.client.erhlc.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQuery;
+import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
+import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 
 @Service
 @AllArgsConstructor
@@ -33,6 +36,8 @@ public class ProductService {
     private final ProductAttributesValueRepository productAttributesValueRepository;
     private final ProductImagesRepository productImagesRepository;
     private final ProductCategoriesRepository productCategoriesRepository;
+    private final ProductElasticsearchRepository productElasticsearchRepository;
+
 
     public void create(ProductDTOGet productDTO){
         ProductCategories productCategories;
@@ -65,12 +70,12 @@ public class ProductService {
                         image.getExtension(), product.getId()))
                 .product(product)
                 .build()).
-                forEach(image -> productImagesRepository.save(image));
+                forEach(productImagesRepository::save);
 
         productDTO.getAttributes().stream().map(attribute -> ProductAttributesValue.builder().product(product)
                 .name(attribute.getName())
                 .value(attribute.getValue())
-                .build()).forEach(attribute -> productAttributesValueRepository.save(attribute));
+                .build()).forEach(productAttributesValueRepository::save);
 
 
     }
@@ -144,7 +149,7 @@ public class ProductService {
     }
 
     public PriceDTO getMinAndMaxPriceCategory(String category){
-        List<Product> productList = productRepository.findAll();
+        List<Product> productList = (List<Product>) productRepository.findAll();
 
         if(category != null)
             productList = productList.stream().

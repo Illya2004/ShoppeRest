@@ -1,38 +1,36 @@
 package com.example.springpr.entity;
 
-
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-import org.springframework.data.elasticsearch.annotations.Setting;
 
-
-
-@Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+@Document(indexName = "product", createIndex = false)
+public class ProductElasticsearch {
     @Id
-    @GeneratedValue(generator = "product_sequence")
-    @SequenceGenerator(name="product_sequence", sequenceName="product_sequence", allocationSize=1)
+    @Field(type = FieldType.Long)
     private Long id;
 
+    @Field(type = FieldType.Keyword)
     private String name;
 
+    @Field(type = FieldType.Float)
     private Float price;
 
     private String short_description;
     private String full_description;
     private String sku;
 
-    @ManyToOne
-    private ProductCategories category;
 
     private String sub_category;
     private String imageURL;
-
 }

@@ -1,14 +1,8 @@
-# Use an official OpenJDK runtime as a parent image
-FROM openjdk:11-jre-slim
+FROM gradle:7.2.0-jdk17 AS build
+COPY . .
+RUN gradle build -DskipTests
 
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy the executable JAR file from the target directory into the container at /app
-COPY target/SpringRc.jar .
-
-# Make port 8080 available to the world outside this container
+FROM openjdk:17.0.1-jdk-slim
+COPY --from=build /build/libs/SpringPr-0.0.1-SNAPSHOT.jar SpringPr.jar
 EXPOSE 8080
-
-# Run the JAR file when the container launches
-CMD ["java", "-jar", "SpringRc.jar"]
+ENTRYPOINT ["java", "-jar", "SpringPr.jar"]
