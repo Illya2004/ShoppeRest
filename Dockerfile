@@ -1,12 +1,16 @@
-# Use the official Gradle image to build the project
+# Build stage
 FROM gradle:7.2.0-jdk17 AS build
-WORKDIR /app
 COPY . .
 RUN ./gradlew clean build -x test
 
-# Use the official OpenJDK image to run the application
+# Tag the image
+ARG IMAGE_TAG
+ARG REGISTRY_URL
+ARG REMOTE_IMAGE_NAME
+RUN docker tag myapp:$IMAGE_TAG $REGISTRY_URL/$REMOTE_IMAGE_NAME:$IMAGE_TAG
+
+# Production stage
 FROM openjdk:17.0.1-jdk-slim
-WORKDIR /app
-COPY --from=build /app/build/libs/SpringPr-0.0.1-SNAPSHOT.jar SpringPr.jar
+COPY --from=build /build/libs/SpringPr-0.0.1-SNAPSHOT.jar SpringPr.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "SpringPr.jar"]
