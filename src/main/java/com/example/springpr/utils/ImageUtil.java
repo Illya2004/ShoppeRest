@@ -31,7 +31,6 @@ public class ImageUtil {
             // Save the BufferedImage as an image file
 
             File outputFile = new File(path);
-            System.out.println(imageBytes);
             ImageIO.write(bufferedImage, extension, outputFile);
 
             System.out.println("Image saved successfully!");
