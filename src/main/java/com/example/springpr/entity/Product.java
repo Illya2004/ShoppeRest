@@ -3,10 +3,7 @@ package com.example.springpr.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
-import org.springframework.data.elasticsearch.annotations.Setting;
+
 
 
 

@@ -2,7 +2,6 @@ package com.example.springpr.service.product;
 
 import com.example.springpr.dto.product.*;
 import com.example.springpr.entity.*;
-import com.example.springpr.repository.elasticsearch.ProductElasticsearchRepository;
 import com.example.springpr.repository.product.ProductAttributesValueRepository;
 import com.example.springpr.repository.product.ProductCategoriesRepository;
 import com.example.springpr.repository.product.ProductImagesRepository;
@@ -10,23 +9,13 @@ import com.example.springpr.repository.product.ProductRepository;
 import com.example.springpr.utils.ImageUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.elasticsearch.index.query.MultiMatchQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.springframework.data.elasticsearch.client.erhlc.ElasticsearchRestTemplate;
-import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQuery;
-import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.SearchHit;
-import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
-import org.springframework.data.elasticsearch.core.query.Query;
+
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 
 @Service
 @AllArgsConstructor
@@ -36,7 +25,6 @@ public class ProductService {
     private final ProductAttributesValueRepository productAttributesValueRepository;
     private final ProductImagesRepository productImagesRepository;
     private final ProductCategoriesRepository productCategoriesRepository;
-    private final ProductElasticsearchRepository productElasticsearchRepository;
 
 
     public void create(ProductDTOGet productDTO){
